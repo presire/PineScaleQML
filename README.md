@@ -8,6 +8,8 @@ This article uses Mobian,<br>
 <u>you should be able to install it on other Linux distributions as well.</u><br>
 (Ex. Manjaro ARM, openSUSE TW, ... etc)<br>
 <br>
+PineScaleQML uses the <I>"**wlr-randr**"</I> package for screen scaling.<br>
+<br>
 *Note:*<br>
 *PineScaleQML is created in Qt 5.15, so it requires Qt 5.15 library.*<br>
 <br>
@@ -33,7 +35,8 @@ Install the dependencies required to build the PineScaleQML.
 
     sudo apt-get install qt5-qmake qt5-qmake-bin \
                          libqt5core5a libqt5gui5 libqt5quick5 libqt5quickcontrols2-5 \
-                         libqt5qml5 libqt5qmlmodels5 libqt5network5
+                         libqt5qml5 libqt5qmlmodels5 libqt5network5 \
+                         wlr-randr
 <br>
 <br>
 
