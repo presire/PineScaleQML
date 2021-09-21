@@ -11,14 +11,14 @@ SOURCES += \
         CMainWindow.cpp \
         main.cpp
 
+HEADERS += \
+    CAES.h \
+    CMainWindow.h
+
 RESOURCES += \
             qml.qrc \
             PineScale.svg \
             Qt.svg
-
-HEADERS += \
-    CAES.h \
-    CMainWindow.h
 
 DISTFILES += \
     PineScale.svg \
@@ -32,11 +32,11 @@ QML_DESIGNER_IMPORT_PATH =
 
 # Default rules for deployment.
 #qnx: target.path = /tmp/$${TARGET}/bin
-#else: unix:!android: target.path = /home/mobian/InstallSoftware/$${TARGET}
+#else: unix:!android: target.path = 
 #!isEmpty(target.path): INSTALLS += target
 
 isEmpty(PREFIX) {
-    PREFIX = /$${PWD}/$${TARGET}
+    PREFIX = $${PWD}/$${TARGET}
 }
 
 target.path = $${PREFIX}/

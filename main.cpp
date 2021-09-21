@@ -2,6 +2,7 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QQuickStyle>
+#include <QIcon>
 #include "CMainWindow.h"
 
 
@@ -22,6 +23,9 @@ int main(int argc, char *argv[])
     {
         return 1;
     }
+    
+    // Set PineScaleQML Icon
+    app.setWindowIcon(QIcon(":/PineScale.svg"));
 
     // メイン画面のコア処理
     qmlRegisterType<CMainWindow>("MainWindow", 1, 0, "CMainWindow");
