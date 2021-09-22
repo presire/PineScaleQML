@@ -84,4 +84,9 @@ Make sure you can execute **PineScaleQML**.<br>
 <br>
 <center><img src="img/PineScaleQML_SS_1.png" width="35%" height="35%" ></center><br>
 <br>
+To reboot Phosh, first, enter the Linux administrator password into text input,<br>
+and press [Save Password] button.<br>
+<br>
+Next, press [Restart Phosh] button.
+<br>
 <br>

@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
     // Trying to close the Lock File, if the attempt is unsuccessful for 100 milliseconds,
     // then there is a Lock File already created by another process.
     // Therefore, we throw a warning and close the program
-    QLockFile lockFile(QDir::temp().absoluteFilePath("<uniq id>.lock"));
+    QLockFile lockFile(QDir::temp().absoluteFilePath("PineScaleQML.lock"));
 
     if(!lockFile.tryLock(100))
     {
