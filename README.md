@@ -33,14 +33,14 @@ Get the latest updates on PinePhone.<br>
 
 Install the dependencies required to build the PineScaleQML.  
 
-    sudo apt-get install qt5-qmake qt5-qmake-bin \
+    sudo apt-get install wlr-randr \
+                         qt5-qmake qt5-qmake-bin \
                          libqt5core5a libqt5gui5 libqt5quick5 libqt5quickcontrols2-5 \
-                         libqt5qml5 libqt5qmlmodels5 libqt5network5 \
-                         wlr-randr
+                         libqt5qml5 libqt5qmlmodels5 libqt5network5
 <br>
 <br>
 
-# 2. Compile PineScaleQML
+# 2. Compile & Install PineScaleQML
 Download the source code from PineScaleQML's Github.<br>
 
     git clone https://github.com/presire/PineScaleQML.git PineScaleQML
@@ -59,6 +59,9 @@ The recommended installation directory is the home directory. (Ex. <I>**${HOME}/
     make -j $(nproc)
     make install
 <br>
+
+    
+    cp ./PineScaleQML.svg  /<PineScaleQML Install Directory>/
 <br>
 
 # 3. Create DesktoEntry for PineScaleQML
