@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
     }
     
     // Set PineScaleQML Icon
-    app.setWindowIcon(QIcon(":/PineScale.svg"));
+    app.setWindowIcon(QIcon(":/PineScaleQML.svg"));
 
     // メイン画面のコア処理
     qmlRegisterType<CMainWindow>("MainWindow", 1, 0, "CMainWindow");

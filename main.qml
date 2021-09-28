@@ -10,7 +10,6 @@ ApplicationWindow {
     width: 360
     height: 720
     visible: true
-
     color: Qt.rgba(255, 255, 255, 1)
 
     CMainWindow {
@@ -365,7 +364,7 @@ ApplicationWindow {
             spacing: 20
 
             Image {
-                source: "PineScale.svg"
+                source: "PineScaleQML.svg"
                 scale: mainWindow.width / 360
                 ColumnLayout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
                 fillMode: Image.PreserveAspectFit
@@ -373,7 +372,7 @@ ApplicationWindow {
             }
 
             Label {
-                text: "<html><head/><body><p>PoweroffQML developed by Presire<br> \
+                text: "<html><head/><body><p>PineScaleQML developed by Presire<br> \
                        <a href=\"https://github.com/presire\">Visit Presire Github</a></p></body></html>"
                 width: aboutDialog.availableWidth
 
@@ -478,6 +477,8 @@ ApplicationWindow {
 
                     Layout.alignment: Qt.AlignHCenter
                     Layout.bottomMargin: 20
+                    highlighted : true
+                    scale: mainWindow.width / 360
 
                     Connections {
                         target: aboutQtDialogBtn
