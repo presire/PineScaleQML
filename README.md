@@ -15,7 +15,7 @@ PineScaleQML uses the <I>"**wlr-randr**"</I> package for screen scaling.<br>
 <br>
 
 # 1. Install the necessary dependencies for PineScaleQML
-Create a directory for installing Qt libraries on PinePhone.<br>
+You need to install Qt libraries shown below on PinePhone.<br>
 * libQt5Core.so.5
 * libQt5Gui.so.5
 * libQt5Quick.so.5
@@ -31,7 +31,7 @@ Get the latest updates on PinePhone.<br>
     sudo apt-get dist-upgrade  
 <br>
 
-Install the dependencies required to build the PineScaleQML.  
+Install the dependencies required to build the PineScaleQML.
 
     sudo apt-get install wlr-randr \
                          qt5-qmake qt5-qmake-bin \
