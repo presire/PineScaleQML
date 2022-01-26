@@ -1,31 +1,44 @@
-﻿#include <QGuiApplication>
+﻿#include <QApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QQuickStyle>
 #include <QIcon>
+#include "CRunnable.h"
 #include "CMainWindow.h"
 
 
 int main(int argc, char *argv[])
 {
+    // Disable multiple activation
+    CRunnable Runnable("PineScaleQML-IDBFE-L9GRV-BJNV2-HDFNM-YQFLJ");
+    if (!Runnable.tryToRun())
+    {
+        qDebug() << "PineScaleQML is already running.";
+        return -1;
+    }
+
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
 
-    QGuiApplication app(argc, argv);
+    QApplication app(argc, argv);
     
-    // Trying to close the Lock File, if the attempt is unsuccessful for 100 milliseconds,
-    // then there is a Lock File already created by another process.
-    // Therefore, we throw a warning and close the program
-    QLockFile lockFile(QDir::temp().absoluteFilePath("PineScaleQML.lock"));
-
-    if(!lockFile.tryLock(100))
-    {
-        return 1;
-    }
+    QApplication::setOrganizationName("Presire");
     
     // Set PineScaleQML Icon
-    app.setWindowIcon(QIcon(":/PineScaleQML.svg"));
+    app.setWindowIcon(QIcon(":/Image/PineScaleQML.png"));
+
+    QSettings settings;
+    CMainWindow mainWindow;
+    bool bColorMode = mainWindow.getColorMode();
+    if (bColorMode)
+    {
+        QQuickStyle::setStyle("Material");
+    }
+    else
+    {
+        QQuickStyle::setStyle("Universal");
+    }
 
     // メイン画面のコア処理
     qmlRegisterType<CMainWindow>("MainWindow", 1, 0, "CMainWindow");

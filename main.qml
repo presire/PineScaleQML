@@ -1,44 +1,93 @@
 ﻿import QtQuick 2.15
 import QtQuick.Window 2.15
+import QtQuick.Layouts 1.15
 import QtQuick.Dialogs 1.2
 import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.12
+import Qt.labs.settings 1.1
+import QtQuick.Controls.Material 2.15
+import QtQuick.Controls.Universal 2.15
 import MainWindow 1.0
 
 ApplicationWindow {
     id: mainWindow
-    width: 360
-    height: 720
+    x: 0
+    y: 0
+    width: mainWindowModel.getMainWindowWidth()
+    height: mainWindowModel.getMainWindowHeight()
     visible: true
+    visibility: Window.Maximized
     color: Qt.rgba(255, 255, 255, 1)
 
     CMainWindow {
         id: mainWindowModel;
     }
 
+    Shortcut {
+        sequence: "Esc"
+        onActivated: {
+            if(stackView.depth > 1)
+            {
+                for(let i = stackView.depth; i > 1; i--)
+                {
+                    stackView.pop()
+                }
+
+                actionAboutPineScaleQML.enabled = true
+                actionAboutQt.enabled = true
+            }
+        }
+    }
+
+    Shortcut {
+        sequence: "Ctrl+Q"
+        onActivated: {
+            quitDialog.open()
+        }
+    }
+
+    // Color Mode
+    Settings {
+        id: settings
+        property string style: mainWindowModel.getColorMode() ? "Material" : "Universal"
+    }
+
+    function saveApplicationState() {
+        // Save window state
+        let bMaximized = false
+        if(mainWindow.visibility === Window.Maximized)
+        {
+            bMaximized = true;
+        }
+
+        mainWindowModel.setMainWindowState(x, y, width, height, bMaximized)
+
+        // Save color mode
+        if (settings.style === "Material")
+        {
+            mainWindowModel.setColorMode(true);
+        }
+        else
+        {
+            mainWindowModel.setColorMode(false);
+        }
+    }
+
     // MenuBar
-    MenuBar {
-        id: menu
+    header: MenuBar {
+        id: mainMenu
         x: 0
         y: 0
         width: mainWindow.width
-        font.pixelSize: {
-            if(mainWindow.height <= 720) 14;
-            else if(mainWindow.height > 720 && mainWindow.height <= 1080) 16;
-            else 18;
-        }
+        font.pixelSize: 16
 
         // [File] Menu
         Menu {
             title: qsTr("&File(&F)")
-            font.pixelSize: {
-                if(mainWindow.height <= 720) 14;
-                else if(mainWindow.height > 720 && mainWindow.height <= 1080) 16;
-                else 18;
-            }
+            font.pixelSize: 16
 
             // [Quit] SubMenu
             Action {
+                id: actionQuit
                 text: "Quit(&O)"
                 onTriggered: {
                     quitDialog.open();
@@ -46,258 +95,194 @@ ApplicationWindow {
             }
         }
 
+        // [Mode] Menu
+        Menu {
+            title: qsTr("Mode(&M)")
+
+            // [Save Password] SubMenu
+            Action {
+                id: darkMode
+                text: "Dark Mode(&D)"
+
+                onTriggered: {
+                    darkModeDialog.open();
+                }
+            }
+        }
+
         // [Help] Menu
         Menu {
             title: qsTr("&Help(&H)")
-            font.pixelSize: {
-                if(mainWindow.height <= 720) 14;
-                else if(mainWindow.height > 720 && mainWindow.height <= 1080) 16;
-                else 18;
-            }
+            font.pixelSize: 16
 
-            // [about PineScale] SubMenu
+            // [about PineScaleQML] SubMenu
             Action {
+                id: actionAboutPineScaleQML
                 text: "about PineScaleQML(&A)"
                 onTriggered: {
-                    aboutDialog.open()
+                    stackView.pop()
+                    stackView.push("aboutPineScaleQML.qml")
+
+                    actionAboutPineScaleQML.enabled = false
+                    actionAboutQt.enabled = true
                 }
             }
 
             // [about Qt] SubMenu
             Action {
+                id: actionAboutQt
                 text: "about Qt(&t)"
                 onTriggered: {
-                    aboutQtDialog.open()
+                    stackView.pop()
+                    stackView.push("aboutQt.qml")
+
+                    actionAboutPineScaleQML.enabled = true
+                    actionAboutQt.enabled = false
                 }
             }
         }
     }
 
-    // MainWindow's Control
-    ColumnLayout {
+    StackView {
+        id: stackView
         x: 0
-        y: menu.height
+        y: mainMenu.height
         width: mainWindow.width
-        height: mainWindow.height - menu.height
-
-        Label {
-            text: "Current Scale: " + mainWindowModel.getCurrentScale(mainWindow.width)
-            Layout.alignment: Qt.AlignRight
-            verticalAlignment: Label.AlignVCenter
-            Layout.rightMargin: Math.round(20 * (mainWindow.width / 360))
-            font.pixelSize: {
-                if(720 / mainWindow.width >= 1.75) 12;
-                else if(720 / mainWindow.width >= 1.5) 14;
-                else if(720 / mainWindow.width >= 1.25) 16;
-                else 20;
-            }
-        }
-
-        Button {
-            id: scale_2_0_Btn
-            x: (parent.width / 2) - width / 2
-            y: (parent.height / 2) + height / 2
-            width: 200
-            height: 35
-            Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
-            text: qsTr("Scale 2.0")
-            highlighted : true
-            scale: mainWindow.width / 360
-
-            Connections {
-                target: scale_2_0_Btn
-                function onClicked() {
-                    mainWindowModel.onClickedScale_2_0()
-                }
-            }
-        }
-
-        Button {
-            id: scale_1_75_Btn
-            x: (parent.width / 2) - width / 2
-            y: (parent.height / 2) + height / 2
-            width: 200
-            height: 35
-            Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
-            text: qsTr("Scale 1.75")
-            highlighted : true
-            scale: mainWindow.width / 360
-
-            Connections {
-                target: scale_1_75_Btn
-                function onClicked() {
-                    mainWindowModel.onClickedScale_1_75();
-                }
-            }
-        }
-
-        Button {
-            id: scale_1_5_Btn
-            x: (parent.width / 2) - width / 2
-            y: (parent.height / 2) + height / 2
-            width: 200
-            height: 35
-            Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
-            text: qsTr("Scale 1.5")
-            highlighted : true
-            scale: mainWindow.width / 360
-
-            Connections {
-                target: scale_1_5_Btn
-                function onClicked() {
-                    mainWindowModel.onClickedScale_1_5();
-                }
-            }
-        }
-
-        Button {
-            id: scale_1_25_Btn
-            x: (parent.width / 2) - width / 2
-            y: (parent.height / 2) + height / 2
-            width: 200
-            height: 35
-            Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
-            text: qsTr("Scale 1.25")
-            highlighted : true
-            scale: mainWindow.width / 360
-
-            Connections {
-                target: scale_1_25_Btn
-                function onClicked() {
-                    mainWindowModel.onClickedScale_1_25();
-                }
-            }
-        }
-
-        Button {
-            id: scale_1_0_Btn
-            x: (parent.width / 2) - width / 2
-            y: (parent.height / 2) + height / 2
-            width: 200
-            height: 35
-            Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
-            text: qsTr("Scale 1.0")
-            highlighted : true
-            scale: mainWindow.width / 360
-
-            Connections {
-                target: scale_1_0_Btn
-                function onClicked() {
-                    mainWindowModel.onClickedScale_1_0();
-                }
-            }
-        }
-
-        RowLayout {
-            x: 0
-            width: mainWindow.width
-            Layout.alignment: Qt.AlignHCenter
-            scale: mainWindow.width / 360
-            spacing: 20
-
-            Button {
-                id: savePasswordBtn
-                width: 120
-                height: 35
-                Layout.alignment: Qt.AlignLeft
-                text: qsTr("Save Password")
-                highlighted : true
-
-                Connections {
-                    target: savePasswordBtn
-                    function onClicked() {
-                        mainWindowModel.savePassword(strInput.text);
-                    }
-                }
-            }
-
-            TextField {
-                id: strInput
-                text: mainWindowModel.getPassword()
-                width: 200
-                height: 35
-                font.pixelSize: 15
-                selectedTextColor: "#393939"
-
-                echoMode: TextInput.Password
-                passwordMaskDelay: 2000
-
-                focus: true
-                cursorVisible: true
-                Layout.alignment: Qt.AlignRight
-                horizontalAlignment: Text.AlignRight
-            }
-        }
-
-        RowLayout {
-            x: 0
-            width: mainWindow.width
-            Layout.alignment: Qt.AlignHCenter
-            scale: mainWindow.width / 360
-            spacing: 20
-
-            Button {
-                id: restartPhoshBtn
-                width: 150
-                height: 35
-                Layout.alignment: Qt.AlignLeft
-                Layout.rightMargin: 20 * (mainWindow.width / 360)
-                text: qsTr("Restart Phosh")
-                highlighted : true
-
-                Connections {
-                    target: restartPhoshBtn
-                    function onClicked() {
-                        mainWindowModel.onClickedPhosh(strInput.text);
-                        Qt.quit();
-                    }
-                }
-            }
-
-            Button {
-                id: quitAppBtn
-                width: 150
-                height: 35
-                Layout.alignment: Qt.AlignRight
-                text: qsTr("Quit PineScale")
-                highlighted : true
-
-                Connections {
-                    target: quitAppBtn
-                    function onClicked() {
-                        quitDialog.open();
-                    }
-                }
-            }
-        }
+        height: mainWindow.height - mainMenu.height
+        initialItem: "scale.qml"
+        anchors.fill: parent
     }
+
 
     Dialog {
-        id: quitDialog
-        title: "Quit PineScale"
-        x: Math.round((mainWindow.width - width) / 2)
+        id: darkModeDialog
+        title: "Dark Mode"
+        x: 0
         y: Math.round(mainWindow.height / 6)
-        width: Math.round(Math.min(mainWindow.width, mainWindow.height) / 10 * 9)
-        contentHeight: quitColumn.height
+        width: mainWindow.width
+        contentHeight: darkModeColumn.height
 
         modal: true
         focus: true
-        closePolicy: Popup.CloseOnEscape
+        closePolicy: Dialog.CloseOnEscape
+
+        property bool bRestart: false
+
+        onClosed: {
+            if (!darkModeDialog.bRestart)
+            {
+                themeSwitch.checked = mainWindowModel.getColorMode();
+            }
+        }
 
         ColumnLayout {
-            id: quitColumn
-            x: parent.x
+            id: darkModeColumn
             width: parent.width
-            spacing: 20 * (mainWindow.width / 360)
+            spacing: 20
 
             Label {
-                text: "Do you want to quit PineScale?"
+                text: "When you restart this software, the color will change."
+                wrapMode: Label.WordWrap
                 horizontalAlignment: Label.AlignHCenter
                 verticalAlignment: Label.AlignVCenter
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 Layout.bottomMargin: 20
-                scale: mainWindow.width / 360
+            }
+
+            Switch {
+                id: themeSwitch
+                text: "Dark"
+                checked: mainWindowModel.getColorMode() ? true : false
+                Layout.alignment: Qt.AlignHCenter
+
+                onCheckedChanged: {
+                    let bDarkMode = mainWindowModel.getColorMode();
+                    if (bDarkMode !== themeSwitch.checked)
+                    {
+                        darkModeRestartBtn.enabled = true;
+                    }
+                    else
+                    {
+                        darkModeRestartBtn.enabled = false;
+                    }
+                }
+            }
+
+            RowLayout {
+                width: parent.width
+                Layout.alignment: Qt.AlignHCenter
+                spacing: 20
+
+                Button {
+                    id: darkModeRestartBtn
+                    text: "Application Quit"
+                    enabled: false
+
+                    Connections {
+                        target: darkModeRestartBtn
+                        function onClicked() {
+                            darkModeDialog.bRestart = true;
+
+                            if (themeSwitch.checked)
+                            {
+                                settings.style = "Material";
+                                mainWindowModel.setColorMode(true);
+                            }
+                            else
+                            {
+                                settings.style = "Universal";
+                                mainWindowModel.setColorMode(false);
+                            }
+
+                            //mainWindowModel.restartSoftware();
+
+                            Qt.quit();
+                        }
+                    }
+                }
+
+                Button {
+                    id: darkModeCancelBtn
+                    text: "Cancel"
+
+                    Connections {
+                        target: darkModeCancelBtn
+                        function onClicked() {
+                            darkModeDialog.close();
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+    Dialog {
+        id: quitDialog
+        title: "Quit PineScaleQML"
+        x: 0
+        y: Math.round(mainWindow.height / 6)
+        width: mainWindow.width
+        contentHeight: quitColumn.height
+
+        modal: true
+        focus: true
+        closePolicy: Dialog.CloseOnEscape
+
+        ColumnLayout {
+            id: quitColumn
+            x: parent.x
+            width: parent.width
+            spacing: 20
+
+            Label {
+                text: "Do you want to quit PineScaleQML?"
+                horizontalAlignment: Label.AlignHCenter
+                verticalAlignment: Label.AlignVCenter
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                Layout.bottomMargin: 20
             }
 
             RowLayout {
@@ -305,20 +290,18 @@ ApplicationWindow {
                 width: quitDialog.width
                 Layout.alignment: Qt.AlignHCenter
                 Layout.bottomMargin: 20
-                scale: mainWindow.width / 360
+                spacing: 20
 
                 Button {
                     id: quitDialogButtonOK
                     text: "OK"
-
-                    width: 100
-                    height: 20
                     Layout.alignment: Qt.AlignHCenter
-                    highlighted : true
 
                     Connections {
                         target: quitDialogButtonOK
                         function onClicked() {
+                            // Save Window State
+                            saveApplicationState()
                             quitDialog.close()
                             Qt.quit()
                         }
@@ -328,162 +311,13 @@ ApplicationWindow {
                 Button {
                     id: quitDialogButtonCancel
                     text: "Cancel"
-
-                    width: 100
-                    height: 20
+                    focus: true
                     Layout.alignment: Qt.AlignHCenter
-                    highlighted : true
 
                     Connections {
                         target: quitDialogButtonCancel
                         function onClicked() {
                             quitDialog.close()
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    Dialog {
-        id: aboutDialog
-        title: "about PineScaleQML"
-        x: Math.round((mainWindow.width - width) / 2)
-        y: Math.round(mainWindow.height / 6)
-        width: Math.round(Math.min(mainWindow.width, mainWindow.height) / 10 * 9)
-        contentHeight: aboutColumn.height
-
-        modal: true
-        focus: true
-        closePolicy: Dialog.CloseOnEscape
-
-        ColumnLayout {
-            id: aboutColumn
-            x: parent.x
-            width: parent.width
-            spacing: 20
-
-            Image {
-                source: "PineScaleQML.svg"
-                scale: mainWindow.width / 360
-                ColumnLayout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
-                fillMode: Image.PreserveAspectFit
-                //ColumnLayout.bottomMargin: 20
-            }
-
-            Label {
-                text: "<html><head/><body><p>PineScaleQML developed by Presire<br> \
-                       <a href=\"https://github.com/presire\">Visit Presire Github</a></p></body></html>"
-                width: aboutDialog.availableWidth
-
-                horizontalAlignment: Label.AlignHCenter
-                verticalAlignment: Label.AlignVCenter
-                ColumnLayout.fillWidth: true
-                ColumnLayout.fillHeight: true
-                //ColumnLayout.bottomMargin: 20
-                scale: mainWindow.width / 360
-            }
-
-            Button {
-                id: aboutDialogButton
-                text: "Close"
-
-                Layout.alignment: Qt.AlignHCenter
-                Layout.bottomMargin: 5
-                highlighted : true
-                scale: mainWindow.width / 360
-
-                Connections {
-                    target: aboutDialogButton
-                    function onClicked() {
-                        aboutDialog.close()
-                    }
-                }
-            }
-        }
-    }
-
-    Dialog {
-        id: aboutQtDialog
-        title: "about Qt"
-        x: 0
-        y: 0
-        width: mainWindow.width
-        height: mainWindow.height
-
-        modal: true
-        focus: true
-        closePolicy: Dialog.CloseOnEscape
-
-        ScrollView {
-            anchors.fill: parent
-
-            ColumnLayout {
-                id: aboutQtColumn
-                x: aboutQtDialog.x
-                width: aboutQtDialog.width
-                spacing: 20
-
-                ColumnLayout.topMargin: 10
-                ColumnLayout.bottomMargin: 10
-
-                Image {
-                    source: "Qt.svg"
-                    ColumnLayout.alignment: Qt.AlignTop | Qt.AlignHCenter
-                    fillMode: Image.PreserveAspectFit
-                }
-
-                Label {
-                    id: aboutQtLabel
-                    textFormat: Label.RichText
-                    text: "<html><head/><body><p><h2>About Qt</h2><br> \
-                        <br> \
-                        This program uses Qt version 5.15.2.<br>
-                        Qt is a C++ toolkit for cross-platform application development.<br>
-                        Qt provides single-source portability across all major desktop operating systems.<br>
-                        It is also available for embedded Linux and other embedded and <br>
-                        mobile operating systems.<br>
-                        <br>
-                        Qt is available under multiple licensing options designed to accommodate the needs <br>
-                        of our various users.<br>
-                        <br>
-                        Qt licensed under our commercial license agreement is appropriate for development <br>
-                        of proprietary/commercial software where you do not want to share any source code <br>
-                        with third parties or otherwise cannot comply with the terms of GNU (L)GPL.<br>
-                        <br>
-                        Qt licensed under GNU (L)GPL is appropriate for the development of Qt applications <br>
-                        provided you can comply with the terms and conditions of the respective licenses.<br>
-                        <br>
-                        Please see <a href=\"http://qt.io/licensing/\">qt.io/licensing</a> for an overview of Qt licensing.<br>
-                        <br>
-                        Copyright (C) 2021 The Qt Company Ltd and other contributors.<br>
-                        Qt and the Qt logo are trademarks of The Qt Company Ltd.<br>
-                        <br>
-                        Qt is The Qt Company Ltd product developed as an open source project.<br>
-                        See <a href=\"http://qt.io/\">qt.io</a> for more information.</p></body></html>"
-                    width: aboutQtDialog.availableWidth
-
-                    ColumnLayout.fillWidth: true
-                    ColumnLayout.fillHeight: true
-
-                    onLinkActivated: {
-                        Qt.openUrlExternally(link)
-                    }
-                }
-
-                Button {
-                    id: aboutQtDialogBtn
-                    text: "Close"
-
-                    Layout.alignment: Qt.AlignHCenter
-                    Layout.bottomMargin: 20
-                    highlighted : true
-                    scale: mainWindow.width / 360
-
-                    Connections {
-                        target: aboutQtDialogBtn
-                        function onClicked() {
-                            aboutQtDialog.close()
                         }
                     }
                 }

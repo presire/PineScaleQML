@@ -2,5 +2,8 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>qtquickcontrols2.conf</file>
+        <file>scale.qml</file>
+        <file>aboutQt.qml</file>
+        <file>aboutPineScaleQML.qml</file>
     </qresource>
 </RCC>

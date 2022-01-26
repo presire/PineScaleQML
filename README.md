@@ -58,26 +58,13 @@ The recommended installation directory is the home directory. (Ex. <I>**${HOME}/
     qmake ../PineScaleQML.pro PREFIX=<The directory you want to install in>
     make -j $(nproc)
     make install
+<br><br>
+
+# 3. Copy DesktoEntry for PineScaleQML
+    cd <The directory you have installed in>
+    cp PineScaleQML.desktop ~/.local/share/applications
 <br>
 
-    
-    cp ./PineScaleQML.svg  /<PineScaleQML Install Directory>/
-<br>
-
-# 3. Create DesktoEntry for PineScaleQML
-    vi ~/.local/share/applications/PineScaleQML.desktop
-<br>
-
-    [Desktop Entry]
-    Type=Application
-    Name=PineScaleQML
-    GenericName=PineScaleQML
-    Comment=Scale Screen
-    Icon=/<PineScaleQML Install Directory>/PineScaleQML.svg
-    Exec=/<PineScaleQML Install Directory>/PineScaleQML %F
-    Terminal=false
-    Categories=Utility;
-<br>
 <center><img src="img/PineScaleQML_SS_2.png" width="35%" height="35%" ></center><br>
 <br>
 <br>
@@ -92,4 +79,4 @@ and press [Save Password] button.<br>
 <br>
 Next, press [Restart Phosh] button.
 <br>
-<br>
+<br> 
